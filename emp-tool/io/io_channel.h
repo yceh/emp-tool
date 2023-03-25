@@ -3,6 +3,7 @@
 #include "emp-tool/utils/block.h"
 #include "emp-tool/utils/prg.h"
 #include "emp-tool/utils/group.h"
+#include <cstddef>
 
 /** @addtogroup IO
   @{
@@ -12,6 +13,12 @@ namespace emp {
 template<typename T>
 class IOChannel {
 public:
+	size_t send_count;
+	size_t recv_count;
+	IOChannel(){
+		send_count=0;
+		recv_count=0;
+	}
 	void send_data(const void * data, int nbyte) {
 		derived().send_data(data, nbyte);
 	}
@@ -20,10 +27,12 @@ public:
 	}
 
 	void send_block(const block* data, int nblock) {
+		send_count+=nblock;
 		send_data(data, nblock*sizeof(block));
 	}
 
 	void recv_block(block* data, int nblock) {
+		recv_count+=nblock;
 		recv_data(data, nblock*sizeof(block));
 	}
 

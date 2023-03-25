@@ -11,8 +11,10 @@ namespace emp {
 
 class PRP { public:
 	AES_KEY aes;
+	long mutable nhashes;
 
 	PRP(const char * seed = fix_key) {
+	    nhashes=0;
 		aes_set_key(seed);
 	}
 
@@ -27,7 +29,8 @@ class PRP { public:
 		AES_set_encrypt_key(v, &aes);
 	}
 
-	void permute_block(block *data, int nblocks) {
+	void permute_block(block *data, int nblocks) const {
+		nhashes+=nblocks;
 		int i = 0;
 		for(; i < nblocks-AES_BATCH_SIZE; i+=AES_BATCH_SIZE) {
 			AES_ecb_encrypt_blks(data+i, AES_BATCH_SIZE, &aes);
